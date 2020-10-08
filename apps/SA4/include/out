@@ -1,0 +1,175 @@
+12c12
+< **  Options for ROMS
+---
+> **  Options for NorSeas-800m
+15,17c15,16
+< #define PROFILE
+< #define DEFLATE
+< #define HDF5
+---
+> #define NORFJORDS  /* ana_nudgcoef.h keyword, mitya */
+> #define UPWIND_LIMITER
+19,20c18,19
+< #undef  RST_SINGLE         /* define if single precision restart fields */
+< #undef  PERFECT_RESTART    /* use to include perfect restart variables */
+---
+> #undef  RST_SINGLE         /*NB anne change define if single precision restart fields */
+> #define PERFECT_RESTART    /* use to include perfect restart variables */
+23,25d21
+< #undef  DIAGNOSTICS_UV     /* define if writing out dynamics to diagnostics file*/
+< #undef  DIAGNOSTICS_TS     /* define if writing out tracers  to diagnostics file*/
+< 
+28c24
+< #undef  UV_VIS2            /* turn ON or OFF Laplacian horizontal mixing */
+---
+> #undef  UV_VIS2            /* turn ON or OFF Laplacian horizontal mixing, Frode off */
+30,31d25
+< #undef  UV_U3ADV_SPLIT     /* use 3rd-order upstream split momentum advection */
+< #define UV_U3HADVECTION    /* define if 3rd-order upstream horiz. advection */
+33c27
+< #undef  UV_C4HADVECTION    /* define if 4th-order centered horizontal advection */
+---
+> #define TS_C4VADVECTION    /* define if 4th-order centered vertical advection */
+35d28
+< #undef  UV_SMAGORINSKY
+38a32
+> #undef  MIX_GEO_UV         /* mixing on geopotential (constant Z) surfaces */
+45d38
+< #undef  TS_U3ADV_SPLIT     /* use 3rd-order upstream split tracer advection */
+52,55d44
+< #ifdef TS_U3HADVECTION
+< # undef UPWIND_LIMITER    /* Possible solution to reduce vertical mixing */
+< #endif
+< 
+57d45
+< #define TS_C4VADVECTION    /* define if 4th-order centered vertical advection */
+58a47
+> #define TS_C4VADVECTION    /* define if 4th-order centered vertical advection */
+61,68c50,51
+< #define MIX_GEO_TS         /* mixing on geopotential (constant Z) surfaces */
+< #undef  MIX_GEO_UV         /* mixing on geopotential (constant Z) surfaces */
+< #define MIX_S_UV           /* mixing along constant S-surfaces */
+< #undef  MIX_S_TS           /* mixing on constant S-surfaces */
+< 
+< #define RI_SPLINES         /* conservative, parabolic splines reconstruction */
+< #define SPLINES_VVISC
+< #define SPLINES_VDIFF
+---
+> #undef  MIX_GEO_TS         /* mixing on geopotential (constant Z) surfaces, Frode undef */
+> #undef  MIX_S_UV           /* mixing along constant S-surfaces,   Frode -*/
+73c56
+< #undef  SPLINES            /* turn ON or OFF parabolic splines reconstruction */
+---
+> #define SPLINES            /* turn ON or OFF parabolic splines reconstruction */
+76,82c59,63
+< #undef  AVERAGES_DETIDE    /* use if writing out NLM time-averaged detided fields*/
+< #define AVERAGES_AKT       /* define if writing out time-averaged AKt*/
+< #define AVERAGES_AKS       /* define if writing out time-averaged AKs*/
+< #define AVERAGES_AKV       /* define if writing out time-averaged AKv */
+< 
+< #undef  STATIONS           /* define if writing out station data */
+< #undef  STATIONS_CGRID     /* define if extracting data at native C-grid */
+---
+> #define AVERAGES_AKT       /*undef Frode, define if writing out time-averaged AKt*/
+> #define AVERAGES_AKS       /*undef Frode, define if writing out time-averaged AKs*/
+> #undef  AVERAGES_AKV       /* define if writing out time-averaged AKv */
+> #undef STATIONS           /* define if writing out station data */
+> #undef STATIONS_CGRID     /* define if extracting data at native C-grid */
+91,96d71
+< # define CRAIG_BANNER
+< # undef  KANTHA_CLAYSON    /* Value for CLS_CMU0 and CLS_C3M vary with choise of stability function */
+< # define CANUTO_A           
+< # undef  CANUTO_B
+< # define CHARNOK
+< # define K_C4ADVECTION
+99,105c74,80
+< # define  LMD_BKPP          /* use if bottom boundary layer KPP mixing */
+< # define  LMD_CONVEC        /* use to add convective mixing due to shear instability */
+< # define  LMD_DDMIX         /* use to add double-diffusive mixing */
+< # define  LMD_NONLOCAL      /* use if nonlocal transport */
+< # define  LMD_RIMIX         /* use to add diffusivity due to shear instability */
+< # define  LMD_SHAPIRO       /* use if Shapiro filtering boundary layer depth */
+< # define  LMD_SKPP          /* use if surface boundary layer KPP mixing */
+---
+> # undef  LMD_BKPP          /* use if bottom boundary layer KPP mixing */
+> # undef  LMD_CONVEC        /* use to add convective mixing due to shear instability */
+> # undef  LMD_DDMIX         /* use to add double-diffusive mixing */
+> # undef  LMD_NONLOCAL      /* use if nonlocal transport */
+> # undef  LMD_RIMIX         /* use to add diffusivity due to shear instability */
+> # undef  LMD_SHAPIRO       /* use if Shapiro filtering boundary layer depth */
+> # undef  LMD_SKPP          /* use if surface boundary layer KPP mixing */
+113c88
+< #undef  ANA_MEANRHO         
+---
+> #undef  ANA_MEANRHO
+117d91
+< /* #define  ANA_NUDGCOEF    bleh denne funka visst ikke*/
+119c93,109
+< #undef  OBC_NUDGING
+---
+> #undef  WESTERN_WALL
+> #undef  NORTHERN_WALL
+> #undef  SOUTHERN_WALL
+> #undef  EASTERN_WALL
+> 
+> /*#define NUDGING_COFF*/
+> 
+> /* CLIMATOLOGY */
+> 
+> #define M2CLIMATOLOGY      /* define 2D momentum climatology */
+> #define M3CLIMATOLOGY      /* define 3D momentum climatology */
+> #define TCLIMATOLOGY       /* define tracers climatology */
+> #define M3CLM_NUDGING      /* nudging 3D momentum climatology */
+> #define TCLM_NUDGING       /* nudging tracers climatology */
+> /*#undef OBC_NUDGING */
+> 
+> 
+122a113
+> 
+125c116,126
+< #ifdef  BULK_FLUXES
+---
+> #undef ICE_MODEL
+> #ifdef BULK_FLUXES
+> # ifdef ICE_MODEL
+> #  define ICE_BULK_FLUXES
+> # endif
+> # undef  ANA_RAIN          /* analytical rain fall rate */
+> # undef  ANA_PAIR          /* analytical surface air pressure */
+> # undef  ANA_HUMIDITY      /* analytical surface air humidity */
+> # undef  ANA_CLOUD         /* analytical cloud fraction */
+> # undef  ANA_TAIR          /* analytical surface air temperature */
+> # undef  ANA_WINDS         /* analytical surface winds */
+131,132c132
+< # define COOL_SKIN         /* turn ON or OFF cool skin correction */
+< # undef  SHORTWAVE
+---
+> # define COOL_SKIN         /* turn ON or OFF cool skin correction *//* Ikke def hos Frode*/
+138c138,139
+< 
+---
+> #define CICE_SW
+> #define REPORT_COUPLING_ALL
+140c141
+< #define SSH_TIDES          /* turn on computation of tidal elevation, default define */
+---
+> #define SSH_TIDES          /* turn on computation of tidal elevation */
+142c143
+< #define ADD_FSOBC          /* Add tidal elevation to processed OBC data, default define */
+---
+> #define ADD_FSOBC          /* Add tidal elevation to processed OBC data */
+144,145c145,150
+< #define ADD_FS_INV_BARO
+< #define RAMP_TIDES         /* Spin up tidal forcing */
+---
+> #undef  RAMP_TIDES         /* Spin up tidal forcing */
+> 
+> 
+> /* ELVER */
+> #define UV_PSOURCE         /* turn ON or OFF point Sources/Sinks */
+> #define TS_PSOURCE         /* turn ON or OFF point Sources/Sinks */
+147,148d151
+< /* Boundary */
+< #define RADIATION_2D
+149a153
+> 
