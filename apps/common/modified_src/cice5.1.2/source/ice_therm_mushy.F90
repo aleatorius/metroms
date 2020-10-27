@@ -1576,7 +1576,7 @@ contains
                                   zSin0, zSin, &
                                   zqsn0, zqsn, &
                                   zqin0, phi)
-       lstop = .true.
+       lstop = .false. !mitya
 
     endif
 

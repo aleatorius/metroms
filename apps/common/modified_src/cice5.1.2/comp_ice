@@ -41,6 +41,7 @@ case $NRES in
     'barents-2.5km' ) GRID=739x949;;
     'arctic-20km') GRID=322x242;;
     'arctic-4km') GRID=1602x1202;;
+    'SA4') GRID=696x454;;
     'col') GRID=5x5;;
     'gx3') GRID=100x116;;
 #    'gx1') GRID=320x384;;
