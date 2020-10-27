@@ -162,7 +162,10 @@
       !Arrays to store sea-ice boundary values per ice category
 
       !Boundary arrays 
-      
+
+
+
+
       real (kind=dbl_kind), &
          dimension(nx_block,ny_block,ncat,max_blocks),public :: &
          aicen_bry, &     ! concentration of ice  
@@ -176,10 +179,13 @@
          ipondn_bry,&     ! mean pond ice thickness over sea ice (m)
          !hbrine_bry,&     ! brine height (m)
          !fbrine_bry,&     !
-         iage_bry         ! ie age  
-      !real (kind=dbl_kind), &
-      !   dimension(nx_block,ny_block,max_blocks),public :: &
-      !   Tsfc_bry         ! ice/snow surface temperature         (oC)
+         iage_bry         ! ice age  
+      real (kind=dbl_kind), &
+          dimension(nx_block,ny_block,max_blocks),public :: &
+      !   Tsfc_bry         ! ice/snow surface temperature(oC)
+          uvel_bry, &      ! x-component of ice velocity (m/s) pedrocice
+          vvel_bry         ! y-component of ice velocity (m/s) pedrocice
+
 
       real (kind=dbl_kind), &
          dimension(nx_block,ny_block,nilyr,ncat,max_blocks),public :: &
@@ -4991,6 +4997,8 @@
                      Sinz_bry(i,j,k,n,iblk) = c0;
                   enddo  
                enddo
+               uvel_bry(i,j,iblk) = c0; ! pedrocice
+               vvel_bry(i,j,iblk) = c0; ! pedrocice
             enddo
          enddo 
       enddo
@@ -5104,8 +5112,10 @@
             !hbrine_work_bry,&     
             !fbrine_work_bry,&    
             iage_work_bry
-      !real (kind=dbl_kind), dimension(nx_block,ny_block,2,max_blocks) :: &
+      real (kind=dbl_kind), dimension(nx_block,ny_block,2,max_blocks) :: & !pedrocice
       !      Tsfc_work_bry
+            uvel_work_bry,& !pedrocice
+            vvel_work_bry   !pedrocice
       
       real (kind=dbl_kind), &
       dimension(nx_block,ny_block,nilyr,ncat,2,max_blocks) :: &
@@ -5363,7 +5373,39 @@
       
       call interpolate_data_n_layer &
               (Sinz_work_bry,Sinz_bry)
-           
+      !pedrocice start 
+      fieldname1='uvel_N_bry' 
+      fieldname2='uvel_S_bry' 
+      fieldname3='uvel_W_bry' 
+      fieldname4='uvel_E_bry' 
+      
+      call read_bry_ice_data_nc (read1, 0, fyear, ixm, ixx, ixp, &
+                maxrec, data_file,fieldname1,fieldname2, &
+                fieldname3,fieldname4,uvel_work_bry, &
+                field_loc_center, field_type_scalar)
+
+      call interp_coeff (recnum, recslot, secday, dataloc)
+
+      call interpolate_data &
+              (uvel_work_bry,uvel_bry)
+
+      fieldname1='vvel_N_bry'
+      fieldname2='vvel_S_bry'
+      fieldname3='vvel_W_bry'
+      fieldname4='vvel_E_bry'
+
+      call read_bry_ice_data_nc (read1, 0, fyear, ixm, ixx, ixp, &
+                maxrec, data_file,fieldname1,fieldname2, &
+                fieldname3,fieldname4,vvel_work_bry, &
+                field_loc_center, field_type_scalar)
+
+      call interp_coeff (recnum, recslot, secday, dataloc)
+
+      call interpolate_data &
+              (vvel_work_bry,vvel_bry)
+
+      !pedrocice end
+     
       if (my_task == master_task ) then
       write (*,*) 'vsnon_N_bry =',vsnon_work_bry(2,ny_block,2,1,1:max_blocks)
       write (*,*) 'vsnon_N =',vsnon_bry(2,ny_block,2,1:max_blocks)

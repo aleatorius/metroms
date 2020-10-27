@@ -13,7 +13,8 @@
       use ice_forcing, only: trestore, trest, &
           aicen_bry, vicen_bry, vsnon_bry,    &
           Tsfc_bry, Tinz_bry, Sinz_bry, alvln_bry,vlvln_bry,&
-          apondn_bry, hpondn_bry, ipondn_bry,iage_bry
+          apondn_bry, hpondn_bry, ipondn_bry,iage_bry,&
+          uvel_bry, vvel_bry  !pedrocice
       use ice_state, only: aicen, vicen, vsnon, trcrn, ntrcr, bound_state, &
                            aice_init, aice0, aice, vice, vsno, trcr, &
                            trcr_depend, tr_pond_lvl, nbtrcr
@@ -28,6 +29,10 @@
       logical (kind=log_kind), public :: &
          restore_ice                 ! restore ice state if true
 
+
+      real (kind=dbl_kind), dimension (:,:,:), allocatable :: & !pedrocice
+         uvel_rest , & ! ice velocity
+         vvel_rest 
       !-----------------------------------------------------------------
       ! state of the ice for each category
       !-----------------------------------------------------------------
@@ -39,7 +44,8 @@
 
       real (kind=dbl_kind), dimension (:,:,:,:,:), allocatable :: &
          trcrn_rest     ! tracers
-
+      
+       
 !=======================================================================
 
       contains
@@ -91,7 +97,9 @@
    allocate (aicen_rest(nx_block,ny_block,ncat,max_blocks), &
              vicen_rest(nx_block,ny_block,ncat,max_blocks), &
              vsnon_rest(nx_block,ny_block,ncat,max_blocks), &
-             trcrn_rest(nx_block,ny_block,ntrcr,ncat,max_blocks))
+             trcrn_rest(nx_block,ny_block,ntrcr,ncat,max_blocks),&
+             uvel_rest(nx_block,ny_block,max_blocks),&  !pedrocice
+             vvel_rest(nx_block,ny_block,max_blocks))   !pedrocice
 
 !-----------------------------------------------------------------------
 ! initialize
@@ -616,6 +624,8 @@
                   trcrn_rest(i,j,nt_alvl,n,iblk) = alvln_bry(1,j,n,iblk)
                   trcrn_rest(i,j,nt_vlvl,n,iblk) = vlvln_bry(1,j,n,iblk) 
                   trcrn_rest(i,j,nt_iage,n,iblk) = iage_bry(1,j,n,iblk) 
+                  uvel_restore(i,j,iblk) = uvel_bry(1,j,iblk); ! pedrocice
+                  vvel_restore(i,j,iblk) = vvel_bry(1,j,iblk); ! pedrocice 
                   if (tr_pond_lvl) then
                      trcrn_rest(i,j,nt_apnd,n,iblk) = apondn_bry(1,j,n,iblk) 
                      trcrn_rest(i,j,nt_hpnd,n,iblk) = hpondn_bry(1,j,n,iblk)
@@ -653,6 +663,12 @@
                   + (vicen_rest(i,j,n,iblk)-vicen(i,j,n,iblk))*ctime
                vsnon(i,j,n,iblk) = vsnon(i,j,n,iblk) &
                   + (vsnon_rest(i,j,n,iblk)-vsnon(i,j,n,iblk))*ctime
+
+               uvel(i,j,iblk) = uvel(i,j,iblk) &     ! pedrocice
+                  + (uvel_restore(i,j,iblk)-uvel(i,j,iblk)) * ctime                 
+               vvel(i,j,iblk) = vvel(i,j,iblk) &     ! pedrocice 
+                  + (vvel_restore(i,j,iblk)-vvel(i,j,iblk)) * ctime  
+ 
                do nt = 1, ntrcr-nbtrcr 
                   if  ((sea_ice_time_bry).and.((nt == nt_qice).or. &
                      (nt == nt_sice))) then
@@ -719,6 +735,8 @@
                   trcrn_rest(i,j,nt_alvl,n,iblk) = alvln_bry(ibc,j,n,iblk)
                   trcrn_rest(i,j,nt_vlvl,n,iblk) = vlvln_bry(ibc,j,n,iblk) 
                   trcrn_rest(i,j,nt_iage,n,iblk) = iage_bry(ibc,j,n,iblk) 
+                  uvel_restore(i,j,iblk) = uvel_bry(ibc,j,iblk); ! pedrocice
+                  vvel_restore(i,j,iblk) = vvel_bry(ibc,j,iblk); ! pedrocice 
                   if (tr_pond_lvl) then
                      trcrn_rest(i,j,nt_apnd,n,iblk) = apondn_bry(ibc,j,n,iblk) 
                      trcrn_rest(i,j,nt_hpnd,n,iblk) = hpondn_bry(ibc,j,n,iblk)
@@ -756,6 +774,12 @@
                   + (vicen_rest(i,j,n,iblk)-vicen(i,j,n,iblk))*ctime
                vsnon(i,j,n,iblk) = vsnon(i,j,n,iblk) &
                   + (vsnon_rest(i,j,n,iblk)-vsnon(i,j,n,iblk))*ctime
+
+               uvel(i,j,iblk) = uvel(i,j,iblk) &     ! pedrocice
+                  + (uvel_restore(i,j,iblk)-uvel(i,j,iblk)) * ctime                 
+               vvel(i,j,iblk) = vvel(i,j,iblk) &     ! pedrocice 
+                  + (vvel_restore(i,j,iblk)-vvel(i,j,iblk)) * ctime  
+
                do nt = 1, ntrcr-nbtrcr
                   if  ((sea_ice_time_bry).and.((nt == nt_qice).or. &
                       (nt == nt_sice))) then
@@ -799,6 +823,8 @@
                   trcrn_rest(i,j,nt_alvl,n,iblk) = alvln_bry(i,1,n,iblk)
                   trcrn_rest(i,j,nt_vlvl,n,iblk) = vlvln_bry(i,1,n,iblk) 
                   trcrn_rest(i,j,nt_iage,n,iblk) = iage_bry(i,1,n,iblk) 
+                  uvel_restore(i,j,iblk) = uvel_bry(i,1,iblk); ! pedrocice
+                  vvel_restore(i,j,iblk) = vvel_bry(i,1,iblk); ! pedrocice 
                   if (tr_pond_lvl) then
                      trcrn_rest(i,j,nt_apnd,n,iblk) = apondn_bry(i,1,n,iblk) 
                      trcrn_rest(i,j,nt_hpnd,n,iblk) = hpondn_bry(i,1,n,iblk)
@@ -836,6 +862,12 @@
                   + (vicen_rest(i,j,n,iblk)-vicen(i,j,n,iblk))*ctime
                vsnon(i,j,n,iblk) = vsnon(i,j,n,iblk) &
                   + (vsnon_rest(i,j,n,iblk)-vsnon(i,j,n,iblk))*ctime
+
+               uvel(i,j,iblk) = uvel(i,j,iblk) &     ! pedrocice
+                  + (uvel_restore(i,j,iblk)-uvel(i,j,iblk)) * ctime                 
+               vvel(i,j,iblk) = vvel(i,j,iblk) &     ! pedrocice 
+                  + (vvel_restore(i,j,iblk)-vvel(i,j,iblk)) * ctime  
+
                do nt = 1, ntrcr-nbtrcr
                   if  ((sea_ice_time_bry).and.((nt == nt_qice).or. &
                       (nt == nt_sice))) then
@@ -893,6 +925,8 @@
                   trcrn_rest(i,j,nt_alvl,n,iblk) = alvln_bry(i,ibc,n,iblk)
                   trcrn_rest(i,j,nt_vlvl,n,iblk) = vlvln_bry(i,ibc,n,iblk) 
                   trcrn_rest(i,j,nt_iage,n,iblk) = iage_bry(i,ibc,n,iblk) 
+                  uvel_restore(i,j,iblk) = uvel_bry(i,ibc,iblk); ! pedrocice
+                  vvel_restore(i,j,iblk) = vvel_bry(i,ibc,iblk); ! pedrocice 
                   if (tr_pond_lvl) then
                      trcrn_rest(i,j,nt_apnd,n,iblk) = apondn_bry(i,ibc,n,iblk) 
                      trcrn_rest(i,j,nt_hpnd,n,iblk) = hpondn_bry(i,ibc,n,iblk)
@@ -944,6 +978,12 @@
                   + (vicen_rest(i,j,n,iblk)-vicen(i,j,n,iblk))*ctime
                vsnon(i,j,n,iblk) = vsnon(i,j,n,iblk) &
                   + (vsnon_rest(i,j,n,iblk)-vsnon(i,j,n,iblk))*ctime
+
+               uvel(i,j,iblk) = uvel(i,j,iblk) &     ! pedrocice
+                  + (uvel_restore(i,j,iblk)-uvel(i,j,iblk)) * ctime                 
+               vvel(i,j,iblk) = vvel(i,j,iblk) &     ! pedrocice 
+                  + (vvel_restore(i,j,iblk)-vvel(i,j,iblk)) * ctime  
+
                !if ((i == nx_block).and.(n == 2)) then
                !    write (nu_diag,*)'aicen =', aicen(i,ibc,n,iblk) 
                !    write (nu_diag,*)'vicen =', vicen(i,ibc,n,iblk)
