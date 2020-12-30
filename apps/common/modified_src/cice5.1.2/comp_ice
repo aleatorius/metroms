@@ -16,8 +16,10 @@ export SRCDIR=$CICE_DIR
 if [ "$METROMS_MYHOST" == "metlocal" ]; then
     export SITE=Linux.Ubuntu
 #    export WORKDIR=/disk1/$LOGNAME/work
-elif [ "$METROMS_MYHOST" == "vilje" ]; then
+elif [ "$METROMS_MYHOST" == "fram" ]; then
     export SITE=Linux.NTNU.vilje
+elif [ "$METROMS_MYHOST" == "gfram" ]; then
+    export SITE=Linux.NTNU.gfram
 #    export WORKDIR=/work/$LOGNAME/
 elif [ "$METROMS_MYHOST" == "met_ppi" ]; then
     export SITE=Linux.MET_PPI
