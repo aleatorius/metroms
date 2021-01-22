@@ -21,6 +21,8 @@ if [ ${METROMS_MYHOST} == "metlocal" ] || [ "${METROMS_MYHOST}" == "met_ppi" ]; 
     FORT=mpif90
 elif [ ${METROMS_MYHOST} == "vilje" ]; then
     FORT=ifort
+elif [ ${METROMS_MYHOST} == "fram" ]; then
+    FORT=ifort
 else
     echo " Computer not defined set environment variable METROMS_MYHOST= metlocal, vilje .."
     exit
