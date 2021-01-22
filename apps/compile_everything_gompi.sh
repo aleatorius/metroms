@@ -5,5 +5,5 @@ source modules_gompi.sh
 
 ./build_mct.sh
 ./build_cice_gbetzy.sh SA4 12 8
-#./build_roms_betzy.sh SA4 -j 4 
+./build_roms_gbetzy.sh SA4 -j 4 
 

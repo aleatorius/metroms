@@ -8,9 +8,10 @@
 
 module purge
 module load StdEnv
-#module load netCDF-Fortran/4.5.2-gompi-2020a
-module load netCDF-Fortran/4.4.5-gompi-2019a
-export I_MPI_F90=gfortran
+module load netCDF-Fortran/4.5.2-gompi-2020a
+#module load netCDF-Fortran/4.4.5-gompi-2019a
+#module load netCDF-Fortran/4.5.2-gompi-2019b
+#export I_MPI_F90=gfortran
 
 
 #intel 2018a

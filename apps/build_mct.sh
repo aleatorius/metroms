@@ -21,6 +21,7 @@ mkdir -p ${tup}/tmproms
 cd ${tup}/tmproms
 # Unpack standard source files
 #tar -xf ${metroms_base}/static_libs/mct-2.8.tar.gz
+
 tar -xf ${metroms_base}/static_libs/mct-2.9.tar.gz
 export MCT_DIR=${tup}/tmproms/MCT
 cd $MCT_DIR
@@ -31,6 +32,8 @@ elif [ ${METROMS_MYHOST} == "vilje" ]; then
     FORT=ifort
 elif [ ${METROMS_MYHOST} == "fram" ]; then
     FORT=ifort
+elif [ ${METROMS_MYHOST} == "gfram" ]; then
+    FORT=mpif90
 else
     echo " Computer not defined set environment variable METROMS_MYHOST= metlocal, vilje .."
     exit

@@ -6,7 +6,7 @@
 INCLDIR    := -I$(MCT_INCDIR)
 SLIBS      := -L$(MCT_LIBDIR) -lmct -lmpeu
 ULIBS      := 
-CPP        := cpp
+CPP        := /usr/bin/cpp
 CPPFLAGS   := -P -traditional
 CPPDEFS    := -DLINUX
 CFLAGS     := -c -O2
@@ -21,7 +21,7 @@ FREEFLAGS  :=
 # flushed to zero: -march=pentium4 -msse2 -mfpmath=sse
 #FFLAGS     := -O2 -w -march=pentium4 -msse2 -mfpmath=sse -fconvert=big-endian
 #FFLAGS     := -O2 -w -msse2 -mfpmath=sse -fconvert=big-endian
-FFLAGS     := -O2 -w -fconvert=big-endian -mcmodel=medium
+FFLAGS     := -O2 -w -fconvert=big-endian -mcmodel=large -nostartfiles 
 MOD_SUFFIX := mod
 LD         := $(FC)
 LDFLAGS    := $(FFLAGS) -v
@@ -37,12 +37,19 @@ LDFLAGS    := $(FFLAGS) -v
 ifeq ($(DITTO), yes)
    CPPDEFS :=  $(CPPDEFS) -DREPRODUCIBLE
 endif
+ifeq ($(BARRIERS), yes)
+   CPPDEFS :=  $(CPPDEFS) -Dgather_scatter_barrier
+endif
 
 ifeq ($(IO_TYPE), netcdf)
    CPPDEFS :=  $(CPPDEFS) -Dncdf
-   INCLDIR := $(INCLDIR) -I/usr/include
-   SLIBS   := $(SLIBS) -L/usr/lib -lnetcdf -lnetcdff
+   INCLDIR := $(INCLDIR) -I/usr/include -I/cluster/software/netCDF-Fortran/4.5.2-gompi-2019b/include
+#   SLIBS   := $(SLIBS) -L/usr/lib -lnetcdf -lnetcdff
+   SLIBS   := $(SLIBS) -lnetcdf -lnetcdff -L/cluster/software/netCDF-Fortran/4.5.2-gompi-2019b/lib
 endif
+NC_CONFIG ?= nc-config
+NETCDF_INCDIR ?= $(shell $(NC_CONFIG) --prefix)/include
+LIBS := $(shell $(NC_CONFIG) --flibs)
 
 ### note this file does not include PIO capability
 ### see Macros.Linux.LANL.conejo

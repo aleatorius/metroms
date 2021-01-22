@@ -66,9 +66,9 @@ export MCT_LIBDIR=${tup}/tmproms/MCT/lib
 cp -a $workingdir/common/modified_src/$CICEVERSION/* $CICE_DIR
 cp -auv $workingdir/common/cice_input_grids/$ROMS_APPLICATION $CICE_DIR/input_templates
 # Remove old binaries
-rm -f $CICE_DIR/rundir/cice
+#rm -rf $CICE_DIR/rundir/cice
 
-#rm -rf ${tup}/tmproms/cice/rundir/compile
+rm -rf ${CICE_DIR}/rundir/compile
 
 #
 # NB! Compile flags needed on Vilje
