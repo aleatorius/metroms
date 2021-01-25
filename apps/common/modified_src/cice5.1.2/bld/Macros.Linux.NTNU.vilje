@@ -18,7 +18,8 @@ FIXEDFLAGS := -132
 FREEFLAGS  := 
 # Should use this together with ROMS? 
 #FFLAGS     :=  -w -g -ip -convert big_endian -assume byterecl -ftz -mcmodel=large -shared-intel
-FFLAGS     :=  -w -O2 -ip -convert big_endian -assume byterecl -ftz -mcmodel=large -shared-intel
+FFLAGS     :=  -g  -traceback -w -O2 -ip -convert big_endian -assume byterecl -ftz -mcmodel=large -shared-intel
+#FFLAGS     :=  -w -O2 -ip -convert big_endian -assume byterecl -ftz -mcmodel=large 
 #FFLAGS     :=  -w -O2 -ip -convert big_endian -assume byterecl -ftz 
 
 #FFLAGS     :=  -w -O3 -ip -convert big_endian -assume byterecl -ftz -fp-model precise
@@ -50,8 +51,8 @@ endif
 
 ifeq ($(IO_TYPE), netcdf)
    CPPDEFS :=  $(CPPDEFS) -Dncdf
-   INCLDIR := $(INCLDIR) -I/usr/include
-   SLIBS   := $(SLIBS) -lnetcdf -lnetcdff
+   INCLDIR := $(INCLDIR) -I/usr/include  ## -L/cluster/software/netCDF-Fortran/4.5.2-gompi-2019b/lib
+   SLIBS   := $(SLIBS) -lnetcdf -lnetcdff ## -L/cluster/software/netCDF-Fortran/4.5.2-gompi-2019b/include
 endif
 
 ifeq ($(compile_threaded), true) 
@@ -72,7 +73,7 @@ ifeq ($(IO_TYPE), pio)
 
 #   CPPDEFS :=  $(CPPDEFS) -Dncdf
 #   INCLDIR := $(INCLDIR) -I/usr/projects/climate/SHARED_CLIMATE/software/conejo/intel_openmpi/netcdf-3.6.3/include
-   SLIBS   := $(SLIBS) -L/usr/projects/climate/SHARED_CLIMATE/software/conejo/intel_openmpi/netcdf-3.6.3/lib -lnetcdf
+#   SLIBS   := $(SLIBS) -L/usr/projects/climate/SHARED_CLIMATE/software/conejo/intel_openmpi/netcdf-3.6.3/lib -lnetcdf
 
 endif
 

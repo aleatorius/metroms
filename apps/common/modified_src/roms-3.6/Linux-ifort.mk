@@ -28,6 +28,7 @@
 # First the defaults
 #
                FC := ifort
+#          FFLAGS := -heap-arrays -fp-model precise 
            FFLAGS := -mcmodel=large -xHOST #-Nmpi
               CPP := /usr/bin/cpp
          CPPFLAGS := -P -traditional
@@ -51,13 +52,21 @@
 #
 
 ifdef USE_NETCDF4
-        NC_CONFIG ?= nc-config
+        NC_CONFIG ?= nf-config #mitya 2018.09.28 -- for fram is better to have it as nf-config rather then nc-config
     NETCDF_INCDIR ?= $(shell $(NC_CONFIG) --prefix)/include
+    NETCDF_LIBDIR ?= $(shell $(NC_CONFIG) --prefix)/lib	
+#    NETCDF_INCDIR := /global/apps/netcdf/4.2.1.1/intel/13.0/include
+#    NETCDF_LIBDIR := /global/apps/netcdf/4.2.1.1/intel/13.0/lib
              LIBS := $(shell $(NC_CONFIG) --flibs)
+#             LIBS += -L$(NETCDF_LIBDIR) -lnetcdff -lnetcdf -L/global/home/kjersti/ecolib -liodll -lliteobjt -lecoclass -lphytobjt -ldissobjt -lparams
+             LIBS := -L$(NETCDF_LIBDIR) -lnetcdff -lnetcdf # mitya ecodynamo stuff-L/global/home/pduarte/symbioses-npi/modules/ecodynamo/ecolib -liodll -lecoclass -lliteobjt -lphytobjt -ldissobjt -lparams -licealgaeobjt
 else
     NETCDF_INCDIR ?= /sw/sdev/Modules/netcdf/netcdf-4.1.3/include
     NETCDF_LIBDIR ?= /sw/sdev/Modules/netcdf/netcdf-4.1.3/lib
+
              LIBS := -L$(NETCDF_LIBDIR) -lnetcdff -lnetcdf
+#             LIBS := -L$(NETCDF_LIBDIR) -lnetcdff -lnetcdf -L/global/home/pduarte/symbioses-npi/modules/ecodynamo/ecolib -liodll -lliteobjt -lecoclass -lphytobjt -ldissobjt -lparams
+
 endif
 
 ifdef USE_ARPACK
@@ -84,15 +93,17 @@ ifdef USE_OpenMP
 endif
 
 ifdef USE_DEBUG
-           FFLAGS += -g -check bounds -traceback
+           FFLAGS += -g -check bounds -traceback 
 #           FFLAGS += -g -check uninit -ftrapuv -traceback
            CFLAGS += -g
          CXXFLAGS += -g
 else
 #           FFLAGS += -ip -O3 
-           FFLAGS += -ip -O3 -g
-           CFLAGS += -O3
-         CXXFLAGS += -O3
+           FFLAGS += -ip -O2 -g 
+#           FFLAGS += -ip -O4  	
+#           FFLAGS += -ip -fast 
+           CFLAGS += -O2
+         CXXFLAGS += -O2
 endif
 
 ifdef USE_MCT

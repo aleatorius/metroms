@@ -22,7 +22,7 @@
 #
 # First the defaults
 #
-               FC := gfortran
+               FC := OMPI_FC=/cluster/software/GCCcore/9.3.0/bin/gfortran mpif90
            FFLAGS := -frepack-arrays -fconvert=big-endian
               CPP := /usr/bin/cpp
          CPPFLAGS := -P -traditional
@@ -42,13 +42,13 @@
 #
 
 ifdef USE_NETCDF4
-        NC_CONFIG ?= nc-config
+        NC_CONFIG ?= nf-config
     NETCDF_INCDIR ?= $(shell $(NC_CONFIG) --prefix)/include
              LIBS := $(shell $(NC_CONFIG) --flibs)
 else
-    NETCDF_INCDIR ?= /usr/include
+    NETCDF_INCDIR ?= /usr/include -I /cluster/software/netCDF-Fortran/4.5.2-gompi-2019b/include
     NETCDF_LIBDIR ?= /usr/lib
-             LIBS := -lnetcdff -lnetcdf
+             LIBS := -lnetcdff -lnetcdf -L/cluster/software/netCDF-Fortran/4.5.2-gompi-2019b/lib
 endif
 
 ifdef USE_ARPACK

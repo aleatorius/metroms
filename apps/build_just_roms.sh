@@ -76,8 +76,8 @@ export USE_DEBUG=
 
 export USE_NETCDF4=on
 
-export USE_CICE=on
-
+export USE_CICE=
+export USE_MCT=on
 export USE_PARALLEL_IO=on 
 
 #export USE_MY_LIBS=on
@@ -290,20 +290,24 @@ rollback() {
 trap 'rollback; exit 99' 0
 
 # 
+export MY_CPP_FLAGS="${MY_CPP_FLAGS} -DNO_LBC_ATT -DMODEL_COUPLING -DUSE_MCT -DMCT_COUPLING -DMCT_LIB"
 if [ -n "${USE_CICE:+1}" ]; then
-	export USE_MCT=on
-	export MY_CPP_FLAGS="${MY_CPP_FLAGS} -DNO_LBC_ATT -DMODEL_COUPLING -DUSE_MCT -DMCT_COUPLING -DMCT_LIB -DCICE_COUPLING -DCICE_OCEAN"
+	export USE_MCT=
+##	export MY_CPP_FLAGS="${MY_CPP_FLAGS} -DNO_LBC_ATT -DMODEL_COUPLING -DUSE_MCT -DMCT_COUPLING -DMCT_LIB -DCICE_COUPLING -DCICE_OCEAN"
   CICE_INCDIR := ${tup}/${tmpdir}/run/${ROMS_APPLICATION}/cice/rundir/compile
   CICE_LIBDIR := ${tup}/${tmpdir}/run/${ROMS_APPLICATION}/cice/rundir/compile
       FFLAGS += -I$(CICE_INCDIR)
         LIBS += -L$(CICE_LIBDIR) -lcice
 fi
 
+mpif90 -v 
+echo "before"
 if [ -n "${USE_NETCDF4:+1}" ]; then
  export USE_DAP=on
  export PATH=/usr/bin:$PATH
 fi
-
+echo "after"
+mpif90 -v
 export MY_HEADER_DIR=${MY_PROJECT_DIR}/include
 export MY_ANALYTICAL_DIR=${MY_HEADER_DIR}
 

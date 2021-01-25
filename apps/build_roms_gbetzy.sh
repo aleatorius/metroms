@@ -38,6 +38,9 @@
 #                                                                       :::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 # 08/01/2014: Big rewrite by nilsmk@met.no to make build-script more general
+
+datstamp=`date +%Y_%m_%d_%H_%M`
+exec 1>log_comp_${datstamp} 2>&1
 set -x
 
 if [ $# -lt 1 ]
@@ -56,23 +59,26 @@ export ROMS_APPLICATION=$1
 export roms_ver="roms-3.6"
 #export roms_ver="roms-trunk"
 
+
+
 export USE_MPI=on
 export USE_MPIF90=on
 
 if [ "${METROMS_MYHOST}" == "metlocal" ]; then
   export FORT=gfortran
-elif [ "${METROMS_MYHOST}" == "fram" ]; then
-  export FORT=ifort
+elif [ "${METROMS_MYHOST}" == "gfram" ]; then
+  export FORT=gfortran
 else
   echo " Computer not defined set environment variable METROMS_MYHOST= metlocal, vilje ... "
   echo " Did you perhaps forgot 'source ./myenv.bash' ? "
   exit
 fi
+mpif90 -v
 
 export USE_OpenMP=
 export USE_LARGE=on
 
-export USE_DEBUG=
+export USE_DEBUG=on
 
 export USE_NETCDF4=on
 
@@ -80,6 +86,7 @@ export USE_CICE=on
 
 export USE_PARALLEL_IO=on 
 
+mpif90 -v
 #export USE_MY_LIBS=on
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 # ... and here.
@@ -106,7 +113,7 @@ export MY_ROMS_SRC=${tup}/${tmpdir}/roms_src
 mkdir -p ${MY_ROMS_SRC}
 cd ${MY_ROMS_SRC}
 tar -xf ${metroms_base}/static_libs/${roms_ver}.tar.gz
-
+mpif90 -v
 # JD : Added temporary to have place for a new file
 touch $MY_ROMS_SRC/ROMS/Nonlinear/frazil_ice_prod_mod.F
 # JD end
@@ -293,17 +300,19 @@ trap 'rollback; exit 99' 0
 if [ -n "${USE_CICE:+1}" ]; then
 	export USE_MCT=on
 	export MY_CPP_FLAGS="${MY_CPP_FLAGS} -DNO_LBC_ATT -DMODEL_COUPLING -DUSE_MCT -DMCT_COUPLING -DMCT_LIB -DCICE_COUPLING -DCICE_OCEAN"
-  CICE_INCDIR := ${tup}/${tmpdir}/run/${ROMS_APPLICATION}/cice/rundir/compile
-  CICE_LIBDIR := ${tup}/${tmpdir}/run/${ROMS_APPLICATION}/cice/rundir/compile
-      FFLAGS += -I$(CICE_INCDIR)
-        LIBS += -L$(CICE_LIBDIR) -lcice
+#  CICE_INCDIR := ${tup}/${tmpdir}/run/${ROMS_APPLICATION}/cice/rundir/compile
+#  CICE_LIBDIR := ${tup}/${tmpdir}/run/${ROMS_APPLICATION}/cice/rundir/compile
+#      FFLAGS += -I$(CICE_INCDIR)
+#        LIBS += -L$(CICE_LIBDIR) -lcice
 fi
 
+mpif90 -v
 if [ -n "${USE_NETCDF4:+1}" ]; then
  export USE_DAP=on
- export PATH=/usr/bin:$PATH
+# export PATH=/usr/bin:$PATH
 fi
-
+mpif90 -v
+echo "mitya, after path"
 export MY_HEADER_DIR=${MY_PROJECT_DIR}/include
 export MY_ANALYTICAL_DIR=${MY_HEADER_DIR}
 
@@ -311,6 +320,8 @@ export MY_ANALYTICAL_DIR=${MY_HEADER_DIR}
 # Put the binary to execute in the following directory.
 export BINDIR=${tup}/${tmpdir}/run/${ROMS_APPLICATION}
 mkdir -p $BINDIR
+
+
 
 cd ${MY_ROMS_SRC}
 if [ $clean -eq 1 ]; then
